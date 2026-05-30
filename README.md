@@ -17,6 +17,10 @@ The project is built around three main ideas:
 
 ## Architecture
 
+<p align="center">
+  <img src="docs/pixzig_field_model_architecture.svg" alt="PixZig Field model architecture" width="680">
+</p>
+
 ```text
 x_t, timestep, optional text conditioning
 -> patchify
@@ -29,6 +33,10 @@ x_t, timestep, optional text conditioning
 -> ResidualConvRefiner
 -> final x0 prediction
 ```
+
+<p align="center">
+  <img src="docs/pixzig_field_layers_map.svg" alt="PixZig Field layer map" width="680">
+</p>
 
 ## Main Modules
 
