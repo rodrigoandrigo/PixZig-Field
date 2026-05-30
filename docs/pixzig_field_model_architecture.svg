@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">PixZig Field model architecture</title>
+  <desc id="desc">Diagram of PixZig Field image generation, including flow sampling, ZigMa backbone, PixNerd head, and residual refiner.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f3a4a"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f6feb"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f8fb; }
+      .title { font: 700 34px Arial, sans-serif; fill: #172033; }
+      .subtitle { font: 400 17px Arial, sans-serif; fill: #4c5a6e; }
+      .section { fill: #ffffff; stroke: #c9d2df; stroke-width: 2; rx: 10; }
+      .box { fill: #ffffff; stroke: #52627a; stroke-width: 2; rx: 8; }
+      .box-soft { fill: #eef5ff; stroke: #1f6feb; stroke-width: 2; rx: 8; }
+      .box-green { fill: #edf8f0; stroke: #2c8a4b; stroke-width: 2; rx: 8; }
+      .box-orange { fill: #fff4e5; stroke: #b86b00; stroke-width: 2; rx: 8; }
+      .box-red { fill: #fff0f0; stroke: #bf3b3b; stroke-width: 2; rx: 8; }
+      .box-dark { fill: #263245; stroke: #111827; stroke-width: 2; rx: 8; }
+      .label { font: 700 18px Arial, sans-serif; fill: #172033; }
+      .label-light { font: 700 18px Arial, sans-serif; fill: #ffffff; }
+      .small { font: 400 14px Arial, sans-serif; fill: #4c5a6e; }
+      .small-light { font: 400 14px Arial, sans-serif; fill: #dbe7ff; }
+      .tiny { font: 400 12px Arial, sans-serif; fill: #5f6f85; }
+      .arrow { stroke: #2f3a4a; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .arrow-blue { stroke: #1f6feb; stroke-width: 2.5; fill: none; marker-end: url(#arrow-blue); }
+      .dash { stroke-dasharray: 7 7; }
+      .token { fill: #dbeafe; stroke: #1f6feb; stroke-width: 1.5; rx: 4; }
+      .pixel { stroke: #ffffff; stroke-width: 1; }
+      .muted-line { stroke: #aab6c6; stroke-width: 1.5; fill: none; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="980"/>
+
+  <text class="title" x="60" y="62">PixZig Field - arquitetura atual do modelo</text>
+  <text class="subtitle" x="60" y="92">Fluxo de geracao: ruido inicial, loop Euler/Heun, backbone ZigMa, cabeca PixNerd e refinamento residual ate x0_pred.</text>
+
+  <rect class="section" x="40" y="120" width="1520" height="220"/>
+  <text class="label" x="70" y="158">Inicio e fim da geracao</text>
+
+  <rect class="box-orange" x="75" y="185" width="190" height="95"/>
+  <text class="label" x="100" y="218">Ruido inicial</text>
+  <text class="small" x="100" y="243">x_t em t=0</text>
+  <text class="tiny" x="100" y="265">[B, C, H, W]</text>
+
+  <rect class="box-soft" x="325" y="185" width="225" height="95"/>
+  <text class="label" x="350" y="218">Sampler</text>
+  <text class="small" x="350" y="243">Euler ou Heun</text>
+  <text class="tiny" x="350" y="265">--sample-n-steps / method</text>
+
+  <rect class="box" x="610" y="185" width="240" height="95"/>
+  <text class="label" x="635" y="218">PixZigField</text>
+  <text class="small" x="635" y="243">prediz x0 a cada passo</text>
+  <text class="tiny" x="635" y="265">model(x_t, t, cond)</text>
+
+  <rect class="box-green" x="910" y="185" width="220" height="95"/>
+  <text class="label" x="935" y="218">Velocidade</text>
+  <text class="small" x="935" y="243">v = (x0_pred - x_t)/(1-t)</text>
+  <text class="tiny" x="935" y="265">flow matching</text>
+
+  <rect class="box-red" x="1190" y="185" width="250" height="95"/>
+  <text class="label" x="1215" y="218">Imagem final</text>
+  <text class="small" x="1215" y="243">x0_pred em t=1</text>
+  <text class="tiny" x="1215" y="265">salva como PNG / Comfy IMAGE</text>
+
+  <path class="arrow" d="M265 233 H325"/>
+  <path class="arrow" d="M550 233 H610"/>
+  <path class="arrow" d="M850 233 H910"/>
+  <path class="arrow" d="M1130 233 H1190"/>
+  <path class="arrow-blue dash" d="M1020 290 C965 325, 570 325, 440 280"/>
+  <text class="tiny" x="640" y="322">loop: atualiza x_t e repete ate completar os passos</text>
+
+  <rect class="section" x="40" y="370" width="1520" height="500"/>
+  <text class="label" x="70" y="408">Dentro do PixZigField</text>
+
+  <rect class="box-orange" x="75" y="445" width="190" height="100"/>
+  <text class="label" x="100" y="478">Entrada</text>
+  <text class="small" x="100" y="503">x_t + timestep t</text>
+  <text class="tiny" x="100" y="525">cond opcional Qwen</text>
+
+  <rect class="box" x="315" y="445" width="190" height="100"/>
+  <text class="label" x="340" y="478">Patchify</text>
+  <text class="small" x="340" y="503">divide a imagem</text>
+  <text class="tiny" x="340" y="525">patch_size x patch_size</text>
+
+  <rect class="box" x="555" y="445" width="195" height="100"/>
+  <text class="label" x="580" y="478">Patch Embed</text>
+  <text class="small" x="580" y="503">Linear patch_dim</text>
+  <text class="tiny" x="580" y="525">tokens [B, N, hidden]</text>
+
+  <rect class="box-soft" x="800" y="445" width="295" height="100"/>
+  <text class="label" x="825" y="478">Timestep Embedder</text>
+  <text class="small" x="825" y="503">sinusoidal + MLP</text>
+  <text class="tiny" x="825" y="525">t_embed [B, hidden]</text>
+
+  <rect class="box-soft" x="75" y="610" width="330" height="190"/>
+  <text class="label" x="100" y="645">ZigMa Backbone</text>
+  <text class="small" x="100" y="672">Sequencia de blocos ZigZag + Mamba</text>
+  <text class="tiny" x="100" y="697">scan_mode: zigzagN1, zigzagN16, ...</text>
+  <text class="tiny" x="100" y="720">cada camada percorre tokens por um caminho</text>
+  <text class="tiny" x="100" y="743">AdaLN usa t_embed + cond projetado</text>
+  <text class="tiny" x="100" y="766">saida: hidden_tokens normalizados</text>
+
+  <g transform="translate(250 650)">
+    <rect class="token" x="0" y="0" width="22" height="22"/>
+    <rect class="token" x="28" y="0" width="22" height="22"/>
+    <rect class="token" x="56" y="0" width="22" height="22"/>
+    <rect class="token" x="0" y="28" width="22" height="22"/>
+    <rect class="token" x="28" y="28" width="22" height="22"/>
+    <rect class="token" x="56" y="28" width="22" height="22"/>
+    <path class="arrow-blue" d="M11 11 H67 V39 H11"/>
+  </g>
+
+  <rect class="box-green" x="470" y="610" width="360" height="190"/>
+  <text class="label" x="495" y="645">PixNerd Head</text>
+  <text class="small" x="495" y="672">Decodifica cada token como campo local</text>
+  <text class="tiny" x="495" y="697">token_proj(hidden_tokens) + t_proj(t_embed)</text>
+  <text class="tiny" x="495" y="720">coordenadas locais + FourierFeatures</text>
+  <text class="tiny" x="495" y="743">FactorizedNerfBlocks com pesos dinamicos</text>
+  <text class="tiny" x="495" y="766">unpatchify -> x0_coarse</text>
+
+  <g transform="translate(710 646)">
+    <rect x="0" y="0" width="26" height="26" fill="#b7f7c5" class="pixel"/>
+    <rect x="26" y="0" width="26" height="26" fill="#8fe6a4" class="pixel"/>
+    <rect x="52" y="0" width="26" height="26" fill="#64ca82" class="pixel"/>
+    <rect x="0" y="26" width="26" height="26" fill="#a7dafb" class="pixel"/>
+    <rect x="26" y="26" width="26" height="26" fill="#6eb6f0" class="pixel"/>
+    <rect x="52" y="26" width="26" height="26" fill="#448bd7" class="pixel"/>
+  </g>
+
+  <rect class="box" x="895" y="610" width="300" height="190"/>
+  <text class="label" x="920" y="645">Residual Refiner</text>
+  <text class="small" x="920" y="672">Conv residual sobre x0_coarse</text>
+  <text class="tiny" x="920" y="697">opcional: concatena x_t</text>
+  <text class="tiny" x="920" y="720">opcional: FiLM com t_embed</text>
+  <text class="tiny" x="920" y="743">saida residual</text>
+  <text class="tiny" x="920" y="766">x0_pred = x0_coarse + residual</text>
+
+  <rect class="box-red" x="1260" y="610" width="210" height="190"/>
+  <text class="label" x="1285" y="645">Saida do modelo</text>
+  <text class="small" x="1285" y="672">x0_pred</text>
+  <text class="tiny" x="1285" y="697">imagem denoised estimada</text>
+  <text class="tiny" x="1285" y="720">usada no sampler</text>
+  <text class="tiny" x="1285" y="743">ou na loss de treino</text>
+
+  <path class="arrow" d="M265 495 H315"/>
+  <path class="arrow" d="M505 495 H555"/>
+  <path class="arrow" d="M750 495 H800"/>
+  <path class="arrow" d="M653 545 C620 585, 340 585, 240 610"/>
+  <path class="arrow" d="M405 705 H470"/>
+  <path class="arrow" d="M830 705 H895"/>
+  <path class="arrow" d="M1195 705 H1260"/>
+
+  <path class="arrow-blue dash" d="M945 545 C930 590, 920 595, 920 610"/>
+  <text class="tiny" x="965" y="585">t_embed condiciona ZigMa, PixNerd e Refiner</text>
+
+  <rect class="section" x="40" y="895" width="1520" height="60"/>
+  <text class="small" x="70" y="930">Resumo de treino: x0 real + ruido -> x_t; modelo prediz x0_pred; perdas combinam flow MSE, x0 Huber, multiscale, frequencia, boundary, LPIPS proxy/opcional e Min-SNR.</text>
+</svg>

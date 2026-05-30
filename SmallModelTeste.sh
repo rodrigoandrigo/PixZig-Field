@@ -1,0 +1,62 @@
+#! /bin/bash
+
+python3 -m pixzig_field.train \
+  --data "./dataset" \
+  --output "./runs/small-model-teste-qwen" \
+  --device cuda \
+  --image-size 256 \
+  --patch-size 16 \
+  --batch-size 1 \
+  --num-workers 2 \
+  --pin-memory \
+  --max-steps 42080 \
+  --gradient-accumulation-steps 2 \
+  --crop-mode pad \
+  --horizontal-flip-p 0.0 \
+  --timestep-sampling uniform \
+  --precision bf16 \
+  --text-encoder qwen \
+  --qwen-model-name "./Qwen3.5-2B-Base" \
+  --qwen-cache-embeddings \
+  --qwen-max-length 128 \
+  --text-encoder-device cuda \
+  --cond-dim 1024 \
+  --hidden-dim 1024 \
+  --depth 12 \
+  --zigma-state-dim 96 \
+  --zigma-expand 1 \
+  --scan-mode zigzagN8 \
+  --mamba-backend native \
+  --mamba-inner-expand 1 \
+  --mamba-head-dim 64 \
+  --mamba-num-groups 1 \
+  --mamba-conv-kernel 4 \
+  --pixnerd-hidden-dim 320 \
+  --pixnerd-layers 3 \
+  --refiner-channels 64 \
+  --refiner-blocks 2 \
+  --learning-rate 1e-4 \
+  --weight-decay 0.01 \
+  --lr-warmup-steps 1000 \
+  --min-lr-ratio 0.1 \
+  --max-grad-norm 1.0 \
+  --ema-decay 0.999 \
+  --ema-update-every 1 \
+  --ema-warmup-steps 0 \
+  --ema-device cuda \
+  --periodic-checkpoints \
+  --save-every-steps 8416 \
+  --save-safetensors \
+  --safetensors-name pixzig-small-model-teste-qwen.safetensors \
+  --safetensors-source ema \
+  --periodic-samples \
+  --sample-every-steps 8416 \
+  --sample-n-steps 20 \
+  --sample-method euler \
+  --sample-prompt "a clean image" \
+  --sample-negative-prompt "" \
+  --sample-cfg-scale 1.0 \
+  --sample-seed 1234 \
+  --no-sample-ema \
+  --seed "42" \
+  --log-every-steps 10

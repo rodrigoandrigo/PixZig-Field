@@ -1,0 +1,58 @@
+#! /bin/bash
+
+python3 -m pixzig_field.train \
+  --data "./dataset" \
+  --output "./runs/standard-qwen-safetensors" \
+  --device cuda \
+  --image-size 512 \
+  --batch-size 1 \
+  --num-workers 4 \
+  --pin-memory \
+  --max-steps 19060 \
+  --gradient-accumulation-steps 4 \
+  --crop-mode pad \
+  --horizontal-flip-p 0.0 \
+  --timestep-sampling uniform \
+  --precision bf16 \
+  --text-encoder qwen \
+  --qwen-model-name "./Qwen3.5-2B-Base" \
+  --qwen-cache-embeddings \
+  --qwen-max-length 128 \
+  --text-encoder-device cuda \
+  --cond-dim 1024 \
+  --hidden-dim 3072 \
+  --depth 28 \
+  --mamba-backend native \
+  --mamba-inner-expand 1 \
+  --mamba-head-dim 64 \
+  --mamba-num-groups 1 \
+  --mamba-conv-kernel 4 \
+  --pixnerd-hidden-dim 768 \
+  --pixnerd-layers 4 \
+  --refiner-channels 96 \
+  --refiner-blocks 3 \
+  --learning-rate 1e-4 \
+  --weight-decay 0.01 \
+  --lr-warmup-steps 1000 \
+  --min-lr-ratio 0.1 \
+  --max-grad-norm 1.0 \
+  --ema-decay 0.9999 \
+  --ema-update-every 1 \
+  --ema-warmup-steps 0 \
+  --ema-device cuda \
+  --periodic-checkpoints \
+  --save-every-steps 1000 \
+  --save-safetensors \
+  --safetensors-name pixzig-standard.safetensors \
+  --safetensors-source ema \
+  --periodic-samples \
+  --sample-every-steps 1000 \
+  --sample-n-steps 20 \
+  --sample-method euler \
+  --sample-prompt "a clean image" \
+  --sample-negative-prompt "" \
+  --sample-cfg-scale 1.0 \
+  --sample-seed 1234 \
+  --no-sample-ema \
+  --seed 42 \
+  --log-every-steps 10
